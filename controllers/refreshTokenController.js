@@ -1,25 +1,19 @@
 const jwt = require("jsonwebtoken");
-const userDB = {
-  users: require("../models/users.json"),
-  setUsers: function (data) {
-    this.users = data;
-  },
-};
+const User = require("../models/Users")
 
 const handleRefreshToken = async (req, res) => {
-  console.log("Inside handlelogin");
   const cookies = req.cookies;
-
+ console.log("handle refresh")
   if (!cookies?.jwt) {
     return res.status(401).json({ message: "Un-authorised" });
   }
   const refreshToken = cookies.jwt;
   try {
-    const foundUser = userDB.users.find(
-      (person) => person.refreshToken === refreshToken
-    );
+    const foundUser = await User.findOne({refreshToken});
+    console.log(foundUser)
+    // const refreshToken = User.find(user => user.refreshToken)
     if (!foundUser) {
-      return res.status(401).json({ message: "Un-authorised" });
+      return res.status(401).json({ message: "Un-authorised dddd" });
     }
     jwt.verify(
       refreshToken,
